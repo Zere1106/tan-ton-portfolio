@@ -9,10 +9,8 @@ export const profile = {
   // Replace null with your real address / profile URLs. Unconfigured links stay disabled.
   contacts: [
     { label: 'Email', value: 'tonthattan116@gmail.com', url: 'mailto:tonthattan116@gmail.com' },
-    { label: 'GitHub', value: 'GitHub profile coming soon', url: null },
+    { label: 'GitHub', value: 'https://github.com/Zere1106', url: 'https://github.com/Zere1106' },
     { label: 'Itch.io', value: 'https://ttt1106.itch.io/', url: 'https://ttt1106.itch.io/' },
-    
-    
   ],
   portrait: null,
 };
