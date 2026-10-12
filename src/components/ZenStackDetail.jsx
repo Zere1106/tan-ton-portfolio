@@ -259,6 +259,11 @@ export function ZenStackDetail({ project, onBack }) {
             <button type="button" onClick={handleBack} className="button button-dark back-button-primary">
               <span aria-hidden="true">←</span> Back to All Projects
             </button>
+            {project.links?.itch && (
+              <LinkButton url={project.links.itch}>
+                <span aria-hidden="true">🎮</span> Play on Itch.io <span aria-hidden="true">↗</span>
+              </LinkButton>
+            )}
             <LinkButton url={project.links.gameplay} unavailable="Gameplay soon">
               <span aria-hidden="true">▷</span> Watch Gameplay
             </LinkButton>

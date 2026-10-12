@@ -35,7 +35,7 @@ export const projects = [
       { title: 'Fitting smaller screens', text: 'Safe-area-aware mobile layouts and responsive popups.' },
       { title: 'Protecting the economy', text: 'Economy security and an idempotent purchase flow to prevent duplicate transactions.' },
     ],
-    links: { gameplay: null, build: null, devlog: null, repository: null },
+    links: { gameplay: null, build: null, devlog: null, repository: null, itch: 'https://ttt1106.itch.io/regnora' },
     repositoryNote: 'Private repository · code walkthrough available on request',
   },
   {
@@ -220,7 +220,7 @@ export const projects = [
       { title: 'Mobile Physics Overhead', text: 'Streamlined stone 2D/3D collision primitives and integrated object pooling to avoid GC spikes.' },
       { title: 'Ability Economy', text: 'Carefully tuned Glue and Super Glue availability to reward strategic rescues without breaking core physics balance.' },
     ],
-    links: { gameplay: null, build: null, devlog: null, repository: null },
+    links: { gameplay: null, build: null, devlog: null, repository: null, itch: 'https://ttt1106.itch.io/zen-stack' },
     repositoryNote: 'Private repository · code walkthrough available on request',
   },
 ];

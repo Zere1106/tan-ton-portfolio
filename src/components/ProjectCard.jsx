@@ -122,7 +122,12 @@ export function ProjectCard({ project, featured = false }) {
       </div>
 
       <div className="project-actions">
-        <LinkButton url={project.links?.gameplay} primary unavailable="Gameplay soon">
+        {project.links?.itch && (
+          <LinkButton url={project.links.itch} primary>
+            <span aria-hidden="true">🎮</span> Play on Itch.io <span aria-hidden="true">↗</span>
+          </LinkButton>
+        )}
+        <LinkButton url={project.links?.gameplay} unavailable="Gameplay soon">
           <span aria-hidden="true">▷</span> Watch Gameplay
         </LinkButton>
       </div>
