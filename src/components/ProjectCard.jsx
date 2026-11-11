@@ -2,25 +2,83 @@ import React from 'react';
 import { LinkButton, SectionLabel } from './Elements';
 import { MobilePhoneTrio } from './MobilePhoneTrio';
 
-export function ProjectCard({ project, featured = false }) {
-  const isZen = project.id === 'zen-stack';
+function parseYouTube(url) {
+  if (!url) return null;
+  let videoId = '';
+  let isShort = false;
+
+  const shortsMatch = url.match(/shorts\/([a-zA-Z0-9_-]+)/);
+  if (shortsMatch) {
+    videoId = shortsMatch[1];
+    isShort = true;
+  } else {
+    const watchMatch = url.match(/(?:v=|\/embed\/|youtu\.be\/)([a-zA-Z0-9_-]+)/);
+    if (watchMatch) {
+      videoId = watchMatch[1];
+    }
+  }
+
+  if (!videoId) return null;
+  return {
+    videoId,
+    isShort,
+    embedUrl: `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`,
+  };
+}
+
+export function ProjectCard({
+  project,
+  featured = false,
+  sectionNumber,
+  sectionRight,
+  sectionTitle,
+  onViewProject,
+}) {
+  const [isPlayingVideo, setIsPlayingVideo] = React.useState(false);
+  const [videoVariant, setVideoVariant] = React.useState('main'); // 'main' or 'shorts'
+
+  const hasPhoneTrio = project.id === 'zen-stack' || project.id === 'block-shadow';
+
+  const currentVideoUrl =
+    videoVariant === 'shorts' && project.links?.shorts
+      ? project.links.shorts
+      : project.links?.gameplay;
+  const videoInfo = parseYouTube(currentVideoUrl);
+
+  const scriptNotes = {
+    'regnora': 'Made from scratch.',
+    'zen-stack': 'Relaxing & nature-inspired',
+    'cozy-aquarium': 'Living aquascape & widget companion',
+    'block-shadow': '3D spatial logic & shadow projection',
+  };
+
+  const handleToggleVideo = () => {
+    const nextState = !isPlayingVideo;
+    setIsPlayingVideo(nextState);
+    if (nextState) {
+      const cardEl = document.getElementById(project.id);
+      if (cardEl) {
+        cardEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  };
 
   return (
     <section
       id={project.id}
-      className={`paper project-card ${featured ? 'featured' : ''} ${isZen ? 'zen-project-card' : ''}`}
+      className={`paper project-card ${featured ? 'featured' : ''} ${hasPhoneTrio ? 'zen-project-card' : ''}`}
       aria-labelledby={`${project.id}-title`}
     >
       <SectionLabel
-        number={featured ? '03' : '04'}
-        right={featured ? 'FEATURED PROJECT / ONLINE' : 'MOBILE PROJECT / ANDROID'}
+        number={sectionNumber || (featured ? '03' : '04')}
+        right={sectionRight || (featured ? 'FEATURED PROJECT / ONLINE' : 'MOBILE PROJECT / ANDROID')}
       >
-        {featured ? 'FEATURED PROJECT' : 'PROJECT SHOWCASE'}
+        {sectionTitle || (featured ? 'FEATURED PROJECT' : 'PROJECT SHOWCASE')}
       </SectionLabel>
 
       <div className="project-heading">
         <div>
-          <span className="script-note">{isZen ? 'Relaxing & nature-inspired' : 'Made from scratch.'}</span>
+          <span className="script-note">{scriptNotes[project.id] || 'Solo Game Development'}</span>
           <h2 id={`${project.id}-title`}>{project.name}</h2>
           <p>{project.type}</p>
         </div>
@@ -38,27 +96,78 @@ export function ProjectCard({ project, featured = false }) {
         </div>
       </div>
 
-      <div className={`project-media ${isZen ? 'zen-trio-media' : ''}`}>
-        {isZen ? (
-          <MobilePhoneTrio project={project} />
-        ) : project.screenshot ? (
-          <img src={project.screenshot} alt={project.screenshotAlt} />
+      <div className={`project-media ${hasPhoneTrio ? 'zen-trio-media' : ''}`}>
+        {isPlayingVideo && videoInfo ? (
+          <div className={`inline-video-wrapper ${videoInfo.isShort ? 'is-short' : 'is-landscape'}`}>
+            <div className="inline-video-header">
+              <div className="video-title-group">
+                <span className="video-status-dot" aria-hidden="true">●</span>
+                <span>GAMEPLAY STREAM: {project.name.toUpperCase()}</span>
+                {project.links?.shorts && (
+                  <div className="video-variant-selector">
+                    <button
+                      type="button"
+                      className={`video-pill ${videoVariant === 'main' ? 'active' : ''}`}
+                      onClick={() => setVideoVariant('main')}
+                    >
+                      Showcase
+                    </button>
+                    <button
+                      type="button"
+                      className={`video-pill ${videoVariant === 'shorts' ? 'active' : ''}`}
+                      onClick={() => setVideoVariant('shorts')}
+                    >
+                      Shorts
+                    </button>
+                  </div>
+                )}
+              </div>
+              <button
+                type="button"
+                className="close-video-btn"
+                onClick={() => setIsPlayingVideo(false)}
+                title="Return to screenshots"
+              >
+                ✕ Close Video
+              </button>
+            </div>
+            <div className="video-player-frame">
+              <iframe
+                src={videoInfo.embedUrl}
+                title={`${project.name} Gameplay Video`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          </div>
         ) : (
-          <div className="media-placeholder">
-            <div className="media-top">
-              <span>GAMEPLAY CAPTURE / 01</span>
-              <span>WORK IN PROGRESS</span>
-            </div>
-            <div className="media-center">
-              <span className="outline-name">{project.name}</span>
-              <span className="capture-note">Gameplay screenshot coming soon</span>
-              <span className="media-rule" />
-              <span className="media-small">A real game. A work in progress.</span>
-            </div>
-            <div className="media-bottom">
-              <span>UNITY / C# / MULTIPLAYER</span>
-              <span>ANDROID + PC</span>
-            </div>
+          <div className="media-visual-container">
+            {hasPhoneTrio ? (
+              <MobilePhoneTrio project={project} />
+            ) : project.screenshot ? (
+              <img src={project.screenshot} alt={project.screenshotAlt || project.name} />
+            ) : (
+              <div className="media-placeholder">
+                <div className="media-top">
+                  <span>GAMEPLAY CAPTURE</span>
+                  <span>WORK IN PROGRESS</span>
+                </div>
+                <div className="media-center">
+                  <span className="outline-name">{project.name}</span>
+                </div>
+              </div>
+            )}
+            {videoInfo && (
+              <button
+                type="button"
+                className="media-play-overlay"
+                onClick={handleToggleVideo}
+                aria-label={`Watch ${project.name} gameplay video`}
+              >
+                <span className="play-triangle" aria-hidden="true">▶</span>
+                <span className="play-overlay-text">Watch Gameplay in Portfolio</span>
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -127,13 +236,37 @@ export function ProjectCard({ project, featured = false }) {
             <span aria-hidden="true">🎮</span> Play on Itch.io <span aria-hidden="true">↗</span>
           </LinkButton>
         )}
-        <LinkButton url={project.links?.gameplay} unavailable="Gameplay soon">
-          <span aria-hidden="true">▷</span> Watch Gameplay
-        </LinkButton>
+
+        {videoInfo ? (
+          <button
+            type="button"
+            className={`link-btn inline-gameplay-btn ${isPlayingVideo ? 'active-video' : ''}`}
+            onClick={handleToggleVideo}
+          >
+            <span aria-hidden="true">{isPlayingVideo ? '✕' : '▷'}</span>{' '}
+            {isPlayingVideo ? 'Close Video' : 'Watch Gameplay'}
+          </button>
+        ) : (
+          <LinkButton url={null} unavailable="Gameplay soon">
+            <span aria-hidden="true">▷</span> Watch Gameplay
+          </LinkButton>
+        )}
+
+        {currentVideoUrl && (
+          <a
+            href={currentVideoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="yt-direct-link"
+            title="Open on YouTube"
+          >
+            YouTube <span aria-hidden="true">↗</span>
+          </a>
+        )}
       </div>
 
       <p className="repo-note">
-        {project.links.repository ? (
+        {project.links?.repository ? (
           <a href={project.links.repository} target="_blank" rel="noopener noreferrer">
             View source on GitHub
           </a>

@@ -61,6 +61,8 @@ function App() {
             <a href="#about">About</a>
             <a href="#regnora">REGNORA</a>
             <a href="#zen-stack">Zen Stack</a>
+            <a href="#cozy-aquarium">Cozy Aquarium</a>
+            <a href="#block-shadow">Block Shadow</a>
             <a href="#skills">Skills</a>
             <a href="#cv">CV</a>
             <a href="#contact">Contact</a>
@@ -162,20 +164,36 @@ function App() {
         </section>
 
         {/* Featured Project: REGNORA */}
-        <ProjectCard project={projects[0]} featured />
+        <ProjectCard
+          project={projects[0]}
+          featured
+          sectionNumber="03"
+          sectionRight="FEATURED PROJECT / ONLINE"
+          sectionTitle="FEATURED PROJECT"
+        />
 
         {/* Additional Game Projects */}
         {projects.length > 1 && (
           <div className="projects-collection" aria-label="Other game projects">
-            {projects.slice(1).map((project) => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-                onViewProject={() => {
-                  window.location.hash = '#zen-stack-detail';
-                }}
-              />
-            ))}
+            {projects.slice(1).map((project, index) => {
+              const secNum = String(index + 4).padStart(2, '0');
+              const secRight =
+                project.id === 'zen-stack'
+                  ? 'MOBILE PROJECT / ANDROID'
+                  : project.id === 'cozy-aquarium'
+                  ? '2.5D SIMULATION / ANDROID WIDGET'
+                  : '3D SPATIAL PUZZLE / ANDROID';
+
+              return (
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  sectionNumber={secNum}
+                  sectionRight={secRight}
+                  sectionTitle="PROJECT SHOWCASE"
+                />
+              );
+            })}
           </div>
         )}
 
@@ -183,7 +201,7 @@ function App() {
         <div id="zen-stack-detail" aria-hidden="true" style={{ display: 'none' }} />
 
         <section id="skills" className="paper skills" aria-labelledby="skills-title">
-          <SectionLabel number="05" right="ALWAYS A WORK IN PROGRESS">
+          <SectionLabel number="07" right="ALWAYS A WORK IN PROGRESS">
             THE TOOLKIT
           </SectionLabel>
           <div className="skills-heading">
@@ -214,7 +232,7 @@ function App() {
         </section>
 
         <section id="cv" className="paper cv" aria-labelledby="cv-title">
-          <SectionLabel number="06">EXPERIENCE & EDUCATION</SectionLabel>
+          <SectionLabel number="08">EXPERIENCE & EDUCATION</SectionLabel>
           <div className="cv-grid">
             <div>
               <span className="script-note">The short version</span>
@@ -253,7 +271,7 @@ function App() {
         </section>
 
         <section id="contact" className="paper contact" aria-labelledby="contact-title">
-          <SectionLabel number="07" right="LET’S MAKE SOMETHING PLAYABLE">
+          <SectionLabel number="09" right="LET’S MAKE SOMETHING PLAYABLE">
             NEXT CHAPTER
           </SectionLabel>
           <XMarks />
