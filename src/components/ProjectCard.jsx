@@ -231,8 +231,14 @@ export function ProjectCard({
       </div>
 
       <div className="project-actions">
+        {project.links?.playStore && (
+          <LinkButton url={project.links.playStore} primary>
+            <span aria-hidden="true">▶</span> Google Play <span aria-hidden="true">↗</span>
+          </LinkButton>
+        )}
+
         {project.links?.itch && (
-          <LinkButton url={project.links.itch} primary>
+          <LinkButton url={project.links.itch} primary={!project.links?.playStore}>
             <span aria-hidden="true">🎮</span> Play on Itch.io <span aria-hidden="true">↗</span>
           </LinkButton>
         )}
